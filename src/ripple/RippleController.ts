@@ -1,6 +1,7 @@
 import RippleSim from "./ripple";
 
 import {COLOR_SCHEMES, WAVE_TYPES} from './constants';
+import Source from "./objects/Source";
 
 const sourceRadius = 17;
 const freqMult = .0233333 * 5;
@@ -48,21 +49,29 @@ export default class RippleController {
     this.setWaveType();
     this.setDamping();
 
+    this.reinit();
+    // set3dViewZoom(zoom3d);
+    // setCanvasSize();
+
     this.sim.setColorScheme(COLOR_SCHEMES[0]);
 
   }
   start() {
+    console.log('hi')
     this.timer = window.setInterval(() => {
-      this.updateRipple()
-    }, 500);
+      // console.log('hi');
+      this.updateRipple();
+    }, 50);
+
+
   }
   
   reinit(setup: boolean = true) {
     // sourceCount = -1;
     // console.log("reinit " + gridSizeX + " " + gridSizeY + "\n");
     // gridSizeXY = gridSizeX * gridSizeY;
-    // if (setup)
-    //   doSetup();
+    if (setup)
+      this.doSetup();
   }
 
   resetTime() {
@@ -83,9 +92,38 @@ export default class RippleController {
     // waveChooser.setSelectedIndex(1);
     this.setWaveType();
     // setup = (Setup) setupList.elementAt(setupChooser.getSelectedIndex());
+
     // setup.select();
+    this.readImport();
+
     this.setDamping();
     // enableDisableUI();
+  }
+
+  readImport(retain: boolean = false) {
+    if (!retain) {
+      this.sim.doBlank();
+      this.resetTime();
+      // this.deleteAllObjects();
+    }
+    // todo - read import string and parse it
+    // first line starts with $ and denotes general setup options
+    // other lines are objects
+
+    const obj = this.createObj();
+    this.dragObjects = [obj];
+
+    this.setDamping();
+    this.wallsChanged();
+    // this.enableDisableUI();
+  }
+
+  createObj() {
+    return new Source(this);
+  }
+
+  wallsChanged() {
+    this.changedWalls = true;
   }
 
   // set length scale and speed for a particular wave type, which determines what units we report
@@ -113,14 +151,14 @@ export default class RippleController {
   }
 
   updateRipple() {
-    const {sim} = this;
+    const {sim, dragObjects} = this;
     if (this.changedWalls) {
       this.prepareObjects();
       this.changedWalls = false;
     }
 
     // todo get from speedBar
-    const iterCount = 40;
+    const iterCount = 10;
     // dont run if stopped
     // if (stoppedCheck.getState())
     //   iterCount = 0;
@@ -130,8 +168,10 @@ export default class RippleController {
     for (let i = 0; i != iterCount; i++) {
       sim.simulate();
       this.t += timeStep;
-      // for (let j = 0; j != dragObjects.size(); j++)
-      //   dragObjects.get(j).run();
+      for (let j = 0; j != dragObjects.length; j++) {
+          dragObjects[j].run();
+      }
+
       this.iters++;
     }
     
@@ -140,7 +180,7 @@ export default class RippleController {
     // this.updateRippleGL(brightMult, view3dCheck.getState());
     //todo 3d
     const brightness = 0.5;
-    sim.updateRipple(brightness);
+    sim.updateRipple(6.8);
     
     if (!is3D) {
       // for (i = 0; i != dragObjects.size(); i++) {

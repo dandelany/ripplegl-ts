@@ -1,13 +1,14 @@
 import RippleSim from "../ripple";
 
 export default abstract class DragObject {
+
   // Vector<DragHandle> handles;
   // 	boolean selected;
   sim: RippleSim;
   rotation: number;
   transform: number[];
   invTransform: number[];
-  selected: boolean;
+  selected: boolean = false;
   // 	double centerX, centerY;  // set in setTransform()
   // 	int flags;
   constructor(sim: RippleSim) {

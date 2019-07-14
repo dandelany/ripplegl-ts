@@ -1,7 +1,12 @@
 import {number} from "prop-types";
 
+export enum Waveform {
+  SINE = 0,
+  PULSE = 1,
+  PACKET = 2
+}
 
-type WaveType = {
+export type WaveType = {
   id: string; 
   waveSpeed: number;
   windowScale: number;

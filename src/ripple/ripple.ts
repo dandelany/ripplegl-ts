@@ -503,7 +503,7 @@ class RippleSim {
     for (let i = 0; i < hexColors.length; i++) {
       const rgb = hexToRgb(hexColors[i]);
       if(!rgb) throw new Error(`invalid color in color scheme: ${hexColors[i]}`);
-      colors.push(rgb[0], rgb[1], rgb[2]);
+      colors.push(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
     }
     // todo??
     // int zerocol3d = zeroColor.toInteger();
@@ -784,6 +784,7 @@ class RippleSim {
       if (xi === 1 || yi === 1 || xi === this.gridSizeX - 2 || yi === this.gridSizeY - 2)
         damp = 0.999 - 8 * 0.01; // was 20
       this.simDamping.push(damp);
+      // this.simDamping.push(1);
     }
   }
 
